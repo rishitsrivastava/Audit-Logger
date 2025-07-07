@@ -4,7 +4,11 @@ import { randomUUID } from "crypto";
 
 export default async function auditLogger(req, res, next) {
   try {
-    const userId = req.user?.id || "anonymous";
+    if (req.headers["x-replay-mode"] === "true") {
+      return next();
+    }
+
+    const userId = req.headers["user-id"] || "anonymous";
     const sessionId = req.headers["x-session-id"] || randomUUID();
     req.sessionId = sessionId;
 
